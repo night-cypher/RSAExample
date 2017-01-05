@@ -2,6 +2,7 @@ package com.questdot.rsaexample;
 
 import android.util.Base64;
 
+import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -12,6 +13,7 @@ import java.security.Signature;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
@@ -165,4 +167,27 @@ public class RSA {
         keyMap.put(PRIVATE_KEY, privateKey);
         return keyMap;
     }
+
+    public static PublicKey getPublicKey(String MODULUS,String EXPONENT) throws Exception{
+        byte[] modulusBytes = Base64.decode(MODULUS,0);
+        byte[] exponentBytes = Base64.decode(EXPONENT,0);
+
+        BigInteger modulus = new BigInteger(1, (modulusBytes) );
+        BigInteger exponent = new BigInteger(1, (exponentBytes));
+
+        RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
+        KeyFactory kf = KeyFactory.getInstance(RSA.KEY_ALGORITHM);
+        return kf.generatePublic(spec);
+    }
+
+    public static byte[] encrypt(Key publicKey, String s) throws Exception{
+        byte[] byteData = s.getBytes();
+        Cipher cipher = Cipher.getInstance("RSA/None/PKCS1Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        byte[] encryptedData = cipher.doFinal(byteData);
+
+
+        return encryptedData;
+    }
+
 }
